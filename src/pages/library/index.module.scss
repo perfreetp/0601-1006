@@ -396,3 +396,54 @@
   font-weight: $font-weight-medium;
   line-height: $line-height-tight;
 }
+
+.visibilityFilterBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  padding: 0 $spacing-md $spacing-md;
+}
+
+.visibilityFilterLabel {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  flex-shrink: 0;
+}
+
+.visibilityFilterItem {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: $spacing-xs $spacing-sm;
+  background: $color-bg-card;
+  border: 3rpx solid $color-border;
+  border-radius: $radius-button;
+  transition: all $transition-base;
+}
+
+.visibilityFilterItemActive {
+  background: $color-bg-warm;
+  border-color: $color-primary;
+}
+
+.visibilityFilterIcon {
+  font-size: $font-size-md;
+}
+
+.visibilityFilterText {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-text-secondary;
+}
+
+.visibilityFilterItemActive .visibilityFilterText {
+  color: $color-primary-dark;
+  font-weight: $font-weight-semibold;
+}
+
+.visibilityFilterCount {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}

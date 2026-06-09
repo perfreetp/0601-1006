@@ -15,6 +15,11 @@ const formatCommentTime = (d: Date) =>
     .toString()
     .padStart(2, '0')}`;
 
+interface CommentThread {
+  parent: VoiceComment;
+  replies: VoiceComment[];
+}
+
 const DetailPage: React.FC = () => {
   const router = useRouter();
   const videoId = router.params.id || '';
@@ -37,13 +42,44 @@ const DetailPage: React.FC = () => {
     if (!video) return false;
     if (video.visibility === 'private') return video.author.id === effectiveUser.id;
     if (video.author.id === effectiveUser.id) return true;
-    if (video.visibility === 'public') return !privacy.blockStranger;
+    if (video.visibility === 'public') {
+      const effectiveIsFamily =
+        effectiveUser.id === currentUser.id ||
+        familyMembers.some((m) => m.id === effectiveUser.id);
+      if (effectiveIsFamily) return true;
+      return !privacy.blockStranger;
+    }
     if (video.visibility === 'family') {
       if (!video.visibleToMemberIds || video.visibleToMemberIds.length === 0) return true;
       return video.visibleToMemberIds.includes(effectiveUser.id);
     }
     return false;
-  }, [video, effectiveUser, privacy]);
+  }, [video, effectiveUser, privacy, currentUser, familyMembers]);
+
+  const commentThreads = useMemo<CommentThread[]>(() => {
+    if (!video) return [];
+    const parentComments = video.comments.filter((c) => !c.replyTo);
+    return parentComments.map((parent) => ({
+      parent,
+      replies: video.comments.filter(
+        (c) => c.replyTo && (c.replyTo.id === parent.id || c.replyTo.name === parent.author.name)
+      )
+    }));
+  }, [video]);
+
+  const [expandedThreads, setExpandedThreads] = useState<Set<string>>(new Set());
+
+  const toggleThread = (parentId: string) => {
+    setExpandedThreads((prev) => {
+      const next = new Set(prev);
+      if (next.has(parentId)) {
+        next.delete(parentId);
+      } else {
+        next.add(parentId);
+      }
+      return next;
+    });
+  };
 
   const visibleMemberNames = useMemo(() => {
     if (!video || video.visibility !== 'family' || !video.visibleToMemberIds) return '';
@@ -331,47 +367,101 @@ const DetailPage: React.FC = () => {
 
         <View className={styles.commentsSection}>
           <Text className={styles.sectionTitle}>🎤 语音评论 ({video.comments.length})</Text>
-          {video.comments.length > 0 ? (
-            video.comments.map((comment) => {
-              const isPlaying = playingCommentId === comment.id;
-              const progress = isPlaying ? playProgress : 0;
+          {commentThreads.length > 0 ? (
+            commentThreads.map(({ parent, replies }) => {
+              const isParentPlaying = playingCommentId === parent.id;
+              const parentProgress = isParentPlaying ? playProgress : 0;
+              const isExpanded = expandedThreads.has(parent.id) || replies.length <= 1;
               return (
-                <View key={comment.id} className={styles.commentItem}>
-                  <Image className={styles.commentAvatar} src={comment.author.avatar} mode="aspectFill" />
-                  <View className={styles.commentContent}>
-                    <View className={styles.commentHeader}>
-                      <View className={styles.commentNameRow}>
-                        <Text className={styles.commentName}>{comment.author.name}</Text>
-                        {comment.replyTo && (
-                          <Text className={styles.commentReplyTag}>
-                            回复 @{comment.replyTo.name}
-                          </Text>
+                <View key={parent.id} className={styles.commentThread}>
+                  <View className={styles.commentItem}>
+                    <Image className={styles.commentAvatar} src={parent.author.avatar} mode="aspectFill" />
+                    <View className={styles.commentContent}>
+                      <View className={styles.commentHeader}>
+                        <View className={styles.commentNameRow}>
+                          <Text className={styles.commentName}>{parent.author.name}</Text>
+                        </View>
+                        <Text className={styles.commentTime}>{parent.createTime}</Text>
+                      </View>
+                      <View
+                        className={classnames(styles.voiceBubble, isParentPlaying && styles.voiceBubblePlaying)}
+                        onClick={() => playVoiceComment(parent)}
+                      >
+                        <Text className={styles.voiceIcon}>{isParentPlaying ? '⏸' : '▶'}</Text>
+                        <View className={styles.voiceWave}>
+                          <View
+                            className={styles.voiceWaveFill}
+                            style={{ width: `${Math.max(parentProgress * 100, 20)}%` }}
+                          />
+                        </View>
+                        <Text className={styles.voiceDuration}>{parent.duration}"</Text>
+                      </View>
+                      <View className={styles.commentActions}>
+                        <Button
+                          className={styles.commentReplyBtn}
+                          onClick={() => startRecording(parent)}
+                        >
+                          💬 语音回复
+                        </Button>
+                        {replies.length > 1 && (
+                          <Button
+                            className={styles.commentToggleBtn}
+                            onClick={() => toggleThread(parent.id)}
+                          >
+                            {isExpanded ? '收起回复' : `查看 ${replies.length} 条回复`}
+                          </Button>
                         )}
                       </View>
-                      <Text className={styles.commentTime}>{comment.createTime}</Text>
-                    </View>
-                    <View
-                      className={classnames(styles.voiceBubble, isPlaying && styles.voiceBubblePlaying)}
-                      onClick={() => playVoiceComment(comment)}
-                    >
-                      <Text className={styles.voiceIcon}>{isPlaying ? '⏸' : '▶'}</Text>
-                      <View className={styles.voiceWave}>
-                        <View
-                          className={styles.voiceWaveFill}
-                          style={{ width: `${Math.max(progress * 100, 20)}%` }}
-                        />
-                      </View>
-                      <Text className={styles.voiceDuration}>{comment.duration}"</Text>
-                    </View>
-                    <View className={styles.commentActions}>
-                      <Button
-                        className={styles.commentReplyBtn}
-                        onClick={() => startRecording(comment)}
-                      >
-                        💬 语音回复
-                      </Button>
                     </View>
                   </View>
+
+                  {isExpanded && replies.length > 0 && (
+                    <View className={styles.replyList}>
+                      {replies.map((reply) => {
+                        const isReplyPlaying = playingCommentId === reply.id;
+                        const replyProgress = isReplyPlaying ? playProgress : 0;
+                        return (
+                          <View key={reply.id} className={classnames(styles.commentItem, styles.replyItem)}>
+                            <Image className={styles.commentAvatar} src={reply.author.avatar} mode="aspectFill" />
+                            <View className={styles.commentContent}>
+                              <View className={styles.commentHeader}>
+                                <View className={styles.commentNameRow}>
+                                  <Text className={styles.commentName}>{reply.author.name}</Text>
+                                  {reply.replyTo && (
+                                    <Text className={styles.commentReplyTag}>
+                                      回复 @{reply.replyTo.name}
+                                    </Text>
+                                  )}
+                                </View>
+                                <Text className={styles.commentTime}>{reply.createTime}</Text>
+                              </View>
+                              <View
+                                className={classnames(styles.voiceBubble, isReplyPlaying && styles.voiceBubblePlaying)}
+                                onClick={() => playVoiceComment(reply)}
+                              >
+                                <Text className={styles.voiceIcon}>{isReplyPlaying ? '⏸' : '▶'}</Text>
+                                <View className={styles.voiceWave}>
+                                  <View
+                                    className={styles.voiceWaveFill}
+                                    style={{ width: `${Math.max(replyProgress * 100, 20)}%` }}
+                                  />
+                                </View>
+                                <Text className={styles.voiceDuration}>{reply.duration}"</Text>
+                              </View>
+                              <View className={styles.commentActions}>
+                                <Button
+                                  className={styles.commentReplyBtn}
+                                  onClick={() => startRecording(reply)}
+                                >
+                                  💬 语音回复
+                                </Button>
+                              </View>
+                            </View>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  )}
                 </View>
               );
             })

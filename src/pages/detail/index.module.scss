@@ -455,6 +455,51 @@
   }
 }
 
+.commentToggleBtn {
+  @include button-reset;
+  background: none;
+  border: none;
+  color: $color-primary-dark;
+  font-size: $font-size-xs;
+  padding: 4rpx $spacing-sm;
+  margin: 0;
+  margin-left: $spacing-sm;
+  height: auto;
+  line-height: 1.4;
+  text-align: left;
+  background: $color-bg-warm;
+  border-radius: $radius-xs;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.commentThread {
+  margin-bottom: $spacing-sm;
+}
+
+.commentThread:last-child {
+  margin-bottom: 0;
+}
+
+.replyList {
+  margin-left: 60rpx;
+  margin-top: $spacing-xs;
+  padding-left: $spacing-md;
+  border-left: 4rpx solid $color-border-light;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.replyItem {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-sm;
+  margin: 0;
+}
+
 .replyingToBar {
   display: flex;
   align-items: center;

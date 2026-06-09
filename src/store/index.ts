@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import Taro from '@tarojs/taro';
-import { VideoItem, PrivacySettings, FamilyMember, VoiceComment, VideoSegment } from '@/types/video';
+import { VideoItem, PrivacySettings, FamilyMember, VoiceComment, VideoSegment, AppNotification } from '@/types/video';
 import { mockVideos, mockFamilyMembers } from '@/data/videos';
 
 const CURRENT_USER = {
@@ -11,6 +11,7 @@ const CURRENT_USER = {
 
 const PRIVACY_STORAGE_KEY = 'family_memory_privacy';
 const VIDEOS_STORAGE_KEY = 'family_memory_videos';
+const NOTIFICATIONS_STORAGE_KEY = 'family_memory_notifications';
 
 const defaultPrivacy: PrivacySettings = {
   blockStranger: true,
@@ -36,6 +37,29 @@ const loadVideos = (): VideoItem[] => {
   return mockVideos;
 };
 
+const loadNotifications = (): AppNotification[] => {
+  try {
+    const saved = Taro.getStorageSync(NOTIFICATIONS_STORAGE_KEY);
+    if (saved && Array.isArray(saved)) return saved;
+  } catch (e) {}
+  return [];
+};
+
+const saveNotifications = (notifications: AppNotification[]) => {
+  try { Taro.setStorageSync(NOTIFICATIONS_STORAGE_KEY, notifications); } catch (e) {}
+};
+
+const formatDateTime = (d: Date) => {
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  const h = d.getHours().toString().padStart(2, '0');
+  const min = d.getMinutes().toString().padStart(2, '0');
+  return `${y}-${m}-${day} ${h}:${min}`;
+};
+
+const generateNid = () => `n_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
 interface AppState {
   videos: VideoItem[];
   currentEditingVideo: VideoItem | null;
@@ -43,6 +67,7 @@ interface AppState {
   familyMembers: FamilyMember[];
   currentUser: { id: string; name: string; avatar: string };
   viewAsUserId: string | null;
+  notifications: AppNotification[];
 
   setCurrentEditingVideo: (video: VideoItem | null) => void;
   createDraftVideo: (duration: number, fromAlbum?: boolean) => VideoItem;
@@ -62,6 +87,12 @@ interface AppState {
 
   getMyVideos: () => VideoItem[];
   getVisibleVideosForMe: () => VideoItem[];
+  getHomeFeedVideos: () => VideoItem[];
+
+  getNotificationsForMe: () => AppNotification[];
+  getUnreadNotificationCount: () => number;
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
 }
 
 const generateId = () => `v_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -99,6 +130,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   familyMembers: mockFamilyMembers,
   currentUser: CURRENT_USER,
   viewAsUserId: null,
+  notifications: loadNotifications(),
 
   setCurrentEditingVideo: (video) => set({ currentEditingVideo: video }),
 
@@ -180,13 +212,32 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   toggleLike: (id) => {
     set((state) => {
+      const video = state.videos.find((v) => v.id === id);
+      const effectiveUser = get().getEffectiveUser();
       const newVideos = state.videos.map((v) =>
         v.id === id
           ? { ...v, isLiked: !v.isLiked, likes: v.isLiked ? v.likes - 1 : v.likes + 1 }
           : v
       );
       try { Taro.setStorageSync(VIDEOS_STORAGE_KEY, newVideos); } catch (e) {}
-      return { videos: newVideos };
+
+      let newNotifications = state.notifications;
+      if (video && !video.isLiked && video.author.id !== effectiveUser.id) {
+        const notif: AppNotification = {
+          id: generateNid(),
+          type: 'like',
+          videoId: video.id,
+          videoTitle: video.title,
+          videoCoverUrl: video.coverUrl,
+          fromUser: { ...effectiveUser },
+          toUserId: video.author.id,
+          createTime: formatDateTime(new Date()),
+          isRead: false
+        };
+        newNotifications = [notif, ...state.notifications];
+        saveNotifications(newNotifications);
+      }
+      return { videos: newVideos, notifications: newNotifications };
     });
   },
 
@@ -202,11 +253,51 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   addVoiceComment: (videoId, comment) => {
     set((state) => {
+      const video = state.videos.find((v) => v.id === videoId);
       const newVideos = state.videos.map((v) =>
         v.id === videoId ? { ...v, comments: [...v.comments, comment] } : v
       );
       try { Taro.setStorageSync(VIDEOS_STORAGE_KEY, newVideos); } catch (e) {}
-      return { videos: newVideos };
+
+      let newNotifications = state.notifications;
+      if (video) {
+        const now = formatDateTime(new Date());
+        if (comment.replyTo) {
+          const parentComment = video.comments.find((c) => c.id === comment.replyTo!.id);
+          if (parentComment && parentComment.author.id !== comment.author.id) {
+            const replyNotif: AppNotification = {
+              id: generateNid(),
+              type: 'reply',
+              videoId: video.id,
+              videoTitle: video.title,
+              videoCoverUrl: video.coverUrl,
+              fromUser: { ...comment.author },
+              toUserId: parentComment.author.id,
+              comment,
+              createTime: now,
+              isRead: false
+            };
+            newNotifications = [replyNotif, ...newNotifications];
+          }
+        }
+        if (video.author.id !== comment.author.id) {
+          const commentNotif: AppNotification = {
+            id: generateNid(),
+            type: 'comment',
+            videoId: video.id,
+            videoTitle: video.title,
+            videoCoverUrl: video.coverUrl,
+            fromUser: { ...comment.author },
+            toUserId: video.author.id,
+            comment,
+            createTime: now,
+            isRead: false
+          };
+          newNotifications = [commentNotif, ...newNotifications];
+        }
+        saveNotifications(newNotifications);
+      }
+      return { videos: newVideos, notifications: newNotifications };
     });
   },
 
@@ -224,7 +315,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   getVisibleVideosForMe: () => {
-    const { privacy, videos } = get();
+    const { privacy, videos, familyMembers, currentUser } = get();
     const effectiveUser = get().getEffectiveUser();
     return videos.filter((v) => {
       if (v.isDraft) return false;
@@ -233,13 +324,52 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
       if (v.author.id === effectiveUser.id) return true;
       if (v.visibility === 'public') {
-        return !privacy.blockStranger ? true : false;
+        const effectiveIsFamily =
+          effectiveUser.id === currentUser.id ||
+          familyMembers.some((m) => m.id === effectiveUser.id);
+        if (effectiveIsFamily) return true;
+        return !privacy.blockStranger;
       }
       if (v.visibility === 'family') {
         if (!v.visibleToMemberIds || v.visibleToMemberIds.length === 0) return true;
         return v.visibleToMemberIds.includes(effectiveUser.id);
       }
       return false;
+    });
+  },
+
+  getHomeFeedVideos: () => {
+    const visible = get().getVisibleVideosForMe();
+    return visible.filter((v) => v.visibility !== 'private');
+  },
+
+  getNotificationsForMe: () => {
+    const effectiveUser = get().getEffectiveUser();
+    return get().notifications.filter((n) => n.toUserId === effectiveUser.id);
+  },
+
+  getUnreadNotificationCount: () => {
+    return get().getNotificationsForMe().filter((n) => !n.isRead).length;
+  },
+
+  markNotificationRead: (id) => {
+    set((state) => {
+      const updated = state.notifications.map((n) =>
+        n.id === id ? { ...n, isRead: true } : n
+      );
+      saveNotifications(updated);
+      return { notifications: updated };
+    });
+  },
+
+  markAllNotificationsRead: () => {
+    set((state) => {
+      const effectiveUser = get().getEffectiveUser();
+      const updated = state.notifications.map((n) =>
+        n.toUserId === effectiveUser.id ? { ...n, isRead: true } : n
+      );
+      saveNotifications(updated);
+      return { notifications: updated };
     });
   }
 }));

@@ -79,3 +79,24 @@ export interface FamilyMember {
   relation: string;
   isSelected?: boolean;
 }
+
+export type NotificationType = 'like' | 'comment' | 'reply';
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  videoId: string;
+  videoTitle: string;
+  videoCoverUrl: string;
+  fromUser: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  toUserId: string;
+  comment?: VoiceComment;
+  createTime: string;
+  isRead: boolean;
+}
+
+export type LibraryVisibilityFilter = 'all' | 'public' | 'family' | 'private';

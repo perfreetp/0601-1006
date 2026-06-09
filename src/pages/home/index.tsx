@@ -6,16 +6,16 @@ import styles from './index.module.scss';
 import VideoCard from '@/components/VideoCard';
 import { mockFamilyTags } from '@/data/videos';
 import { useAppStore } from '@/store';
-import type { VideoItem, FamilyMember } from '@/types/video';
+import type { FamilyMember } from '@/types/video';
 
 const HomePage: React.FC = () => {
   const videos = useAppStore((s) => s.videos);
-  const privacy = useAppStore((s) => s.privacy);
   const currentUser = useAppStore((s) => s.currentUser);
   const familyMembers = useAppStore((s) => s.familyMembers);
   const viewAsUserId = useAppStore((s) => s.viewAsUserId);
   const setViewAsUser = useAppStore((s) => s.setViewAsUser);
   const getEffectiveUser = useAppStore((s) => s.getEffectiveUser);
+  const getHomeFeedVideos = useAppStore((s) => s.getHomeFeedVideos);
   const toggleLike = useAppStore((s) => s.toggleLike);
 
   const [activeFilter, setActiveFilter] = useState<string>('全部');
@@ -24,22 +24,8 @@ const HomePage: React.FC = () => {
   const isViewingAs = viewAsUserId !== null;
 
   const visibleVideos = useMemo(() => {
-    return videos.filter((v: VideoItem) => {
-      if (v.isDraft) return false;
-      if (v.visibility === 'private') {
-        return v.author.id === effectiveUser.id;
-      }
-      if (v.author.id === effectiveUser.id) return true;
-      if (v.visibility === 'public') {
-        return !privacy.blockStranger ? true : false;
-      }
-      if (v.visibility === 'family') {
-        if (!v.visibleToMemberIds || v.visibleToMemberIds.length === 0) return true;
-        return v.visibleToMemberIds.includes(effectiveUser.id);
-      }
-      return false;
-    });
-  }, [videos, privacy, effectiveUser]);
+    return getHomeFeedVideos();
+  }, [videos, getHomeFeedVideos, viewAsUserId]);
 
   const allViewUsers = useMemo<Array<{ id: string; name: string; avatar: string; label: string }>>(() => {
     return [

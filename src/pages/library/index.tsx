@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import styles from './index.module.scss';
 import { mockFamilyTags } from '@/data/videos';
 import { useAppStore } from '@/store';
+import type { LibraryVisibilityFilter } from '@/types/video';
 
 type LibraryTab = 'all' | 'collect' | 'person';
 
@@ -13,6 +14,13 @@ const formatDuration = (seconds: number): string => {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
+
+const visibilityFilterOptions: Array<{ id: LibraryVisibilityFilter; label: string; icon: string }> = [
+  { id: 'all', label: '全部', icon: '📋' },
+  { id: 'public', label: '公开', icon: '🌍' },
+  { id: 'family', label: '指定亲友', icon: '👨‍👩‍👧' },
+  { id: 'private', label: '仅自己', icon: '🔒' }
+];
 
 const LibraryPage: React.FC = () => {
   const videos = useAppStore((s) => s.videos);
@@ -27,6 +35,8 @@ const LibraryPage: React.FC = () => {
   const myVideos = useMemo(() => {
     return videos.filter((v) => v.author.id === effectiveUser.id && !v.isDraft);
   }, [videos, effectiveUser]);
+
+  const [activeVisibilityFilter, setActiveVisibilityFilter] = useState<LibraryVisibilityFilter>('all');
 
   const getVisibleRangeText = (video: typeof myVideos[number]) => {
     if (video.visibility === 'private') return '';
@@ -50,6 +60,15 @@ const LibraryPage: React.FC = () => {
 
   const displayVideos = useMemo(() => {
     let result = myVideos;
+    if (activeVisibilityFilter === 'public') {
+      result = result.filter((v) => v.visibility === 'public');
+    } else if (activeVisibilityFilter === 'family') {
+      result = result.filter(
+        (v) => v.visibility === 'family' && v.visibleToMemberIds && v.visibleToMemberIds.length > 0
+      );
+    } else if (activeVisibilityFilter === 'private') {
+      result = result.filter((v) => v.visibility === 'private');
+    }
     if (activeTab === 'collect') {
       result = result.filter((v) => v.isCollected);
     }
@@ -57,7 +76,18 @@ const LibraryPage: React.FC = () => {
       result = result.filter((v) => v.familyTags.includes(activePersonFilter));
     }
     return result;
-  }, [myVideos, activeTab, activePersonFilter]);
+  }, [myVideos, activeVisibilityFilter, activeTab, activePersonFilter]);
+
+  const visibilityFilterCounts = useMemo(() => {
+    return {
+      all: myVideos.length,
+      public: myVideos.filter((v) => v.visibility === 'public').length,
+      family: myVideos.filter(
+        (v) => v.visibility === 'family' && v.visibleToMemberIds && v.visibleToMemberIds.length > 0
+      ).length,
+      private: myVideos.filter((v) => v.visibility === 'private').length
+    };
+  }, [myVideos]);
 
   const handleVideoClick = (id: string) => {
     console.log('[LibraryPage] 点击视频:', id);
@@ -161,6 +191,28 @@ const LibraryPage: React.FC = () => {
         >
           👨‍👩‍👧 按人物
         </Button>
+      </View>
+
+      <View className={styles.visibilityFilterBar}>
+        <Text className={styles.visibilityFilterLabel}>👁️ 可见范围：</Text>
+        {visibilityFilterOptions.map((opt) => {
+          const isActive = activeVisibilityFilter === opt.id;
+          const count = visibilityFilterCounts[opt.id];
+          return (
+            <View
+              key={opt.id}
+              className={classnames(
+                styles.visibilityFilterItem,
+                isActive && styles.visibilityFilterItemActive
+              )}
+              onClick={() => setActiveVisibilityFilter(opt.id)}
+            >
+              <Text className={styles.visibilityFilterIcon}>{opt.icon}</Text>
+              <Text className={styles.visibilityFilterText}>{opt.label}</Text>
+              <Text className={styles.visibilityFilterCount}>({count})</Text>
+            </View>
+          );
+        })}
       </View>
 
       {activeTab === 'person' && (

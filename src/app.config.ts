@@ -3,8 +3,9 @@ export default defineAppConfig({
     'pages/home/index',
     'pages/capture/index',
     'pages/library/index',
-    'pages/subtitle/index',
+    'pages/messages/index',
     'pages/mine/index',
+    'pages/subtitle/index',
     'pages/editor/index',
     'pages/detail/index',
     'pages/privacy/index',
@@ -37,8 +38,8 @@ export default defineAppConfig({
         text: '作品库'
       },
       {
-        pagePath: 'pages/subtitle/index',
-        text: '字幕'
+       pagePath: 'pages/messages/index',
+        text: '消息'
       },
       {
         pagePath: 'pages/mine/index',
