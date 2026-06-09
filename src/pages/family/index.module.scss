@@ -1,0 +1,212 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding;
+  padding-bottom: 160rpx;
+}
+
+.tipBar {
+  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: center;
+}
+
+.tipIcon {
+  font-size: 48rpx;
+  margin-right: $spacing-md;
+}
+
+.tipText {
+  flex: 1;
+  font-size: $font-size-md;
+  color: #1E40AF;
+  line-height: $line-height-loose;
+}
+
+.sectionTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.memberList {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-lg;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 2rpx solid $color-divider;
+  transition: all $transition-base;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.memberInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.memberName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.memberRelation {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.checkWrap {
+  display: flex;
+  align-items: center;
+}
+
+.checkBox {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-md;
+  border: 4rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $transition-base;
+}
+
+.checkBoxActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-color: $color-primary;
+}
+
+.checkIcon {
+  font-size: 32rpx;
+  color: #ffffff;
+  font-weight: $font-weight-bold;
+}
+
+.relationGroups {
+  margin-bottom: $spacing-lg;
+}
+
+.groupCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.groupTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.groupCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  background: $color-bg-warm;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+}
+
+.groupMembers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.groupMember {
+  display: flex;
+  align-items: center;
+  background: $color-bg-page;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+}
+
+.groupAvatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-xs;
+}
+
+.groupName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(#{$spacing-md} + 40rpx);
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.btn {
+  @include button-reset;
+  flex: 1;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.btnSecondary {
+  background: $color-bg-warm;
+  border: 4rpx solid $color-primary;
+  color: $color-primary-dark;
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4rpx 20rpx rgba(230, 126, 34, 0.3);
+}

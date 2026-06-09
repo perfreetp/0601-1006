@@ -1,0 +1,148 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg $page-padding;
+}
+
+.tipCard {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  display: flex;
+  align-items: flex-start;
+}
+
+.tipIcon {
+  font-size: 48rpx;
+  margin-right: $spacing-md;
+}
+
+.tipContent {
+  flex: 1;
+}
+
+.tipTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: #92400E;
+  margin-bottom: $spacing-xs;
+}
+
+.tipText {
+  font-size: $font-size-md;
+  color: #A16207;
+  line-height: $line-height-loose;
+}
+
+.settingCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 2rpx solid $color-divider;
+  transition: all $transition-base;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.settingIcon {
+  font-size: 48rpx;
+  margin-right: $spacing-md;
+  width: 64rpx;
+  text-align: center;
+}
+
+.settingContent {
+  flex: 1;
+}
+
+.settingTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.settingDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  line-height: $line-height-tight;
+}
+
+.switchWrap {
+  display: flex;
+  align-items: center;
+}
+
+.switch {
+  width: 100rpx;
+  height: 60rpx;
+  border-radius: 999rpx;
+  background: $color-border;
+  padding: 6rpx;
+  position: relative;
+  transition: all $transition-base;
+}
+
+.switchActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+}
+
+.switchDot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-round;
+  background: #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  transition: all $transition-base;
+}
+
+.switchDotActive {
+  transform: translateX(40rpx);
+}
+
+.visibilityOptions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.optionBtn {
+  @include button-reset;
+  flex: 1;
+  background: $color-bg-page;
+  border: 4rpx solid $color-border;
+  height: $button-height-md;
+  border-radius: $radius-button;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.optionBtnActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-color: $color-primary;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+}

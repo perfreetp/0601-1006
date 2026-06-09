@@ -1,0 +1,304 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+}
+
+.previewArea {
+  flex: 1;
+  background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 100%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.previewPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #3a3a3a 0%, #1a1a1a 100%);
+}
+
+.previewIcon {
+  font-size: 200rpx;
+  margin-bottom: $spacing-xl;
+  opacity: 0.5;
+}
+
+.previewText {
+  font-size: $font-size-xxl;
+  color: #ffffff;
+  opacity: 0.7;
+  margin-bottom: $spacing-md;
+}
+
+.previewHint {
+  font-size: $font-size-md;
+  color: #999999;
+}
+
+.timerBar {
+  position: absolute;
+  top: $spacing-xl;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $radius-button;
+  backdrop-filter: blur(10px);
+}
+
+.timerText {
+  font-size: $font-size-xl;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+  font-family: monospace;
+}
+
+.recordingDot {
+  display: inline-block;
+  width: 24rpx;
+  height: 24rpx;
+  background: $color-error;
+  border-radius: $radius-round;
+  margin-right: $spacing-sm;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-xl $page-padding;
+  padding-top: calc(#{$spacing-xl} + 60rpx);
+}
+
+.topBtn {
+  @include button-reset;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: $radius-round;
+  color: #ffffff;
+  font-size: $font-size-xxl;
+  backdrop-filter: blur(10px);
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.95);
+  }
+}
+
+.voiceTip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(230, 126, 34, 0.95);
+  padding: $spacing-lg $spacing-xl;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-popup;
+}
+
+.voiceTipText {
+  font-size: $font-size-xl;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+  text-align: center;
+}
+
+.controlArea {
+  background: #1a1a1a;
+  padding: $spacing-xl $page-padding;
+  padding-bottom: calc(#{$spacing-xl} + 40rpx);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modeTabs {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: $radius-button;
+  padding: $spacing-xs;
+  margin-bottom: $spacing-xl;
+}
+
+.modeTab {
+  @include button-reset;
+  background: transparent;
+  border: none;
+  height: $button-height-md;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+  margin: 0 $spacing-xs;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.modeTabActive {
+  background: $color-primary;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+  box-shadow: 0 4rpx 16rpx rgba(230, 126, 34, 0.4);
+}
+
+.captureRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600rpx;
+}
+
+.sideBtn {
+  @include button-reset;
+  background: rgba(255, 255, 255, 0.1);
+  border: 4rpx solid rgba(255, 255, 255, 0.2);
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: $radius-round;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+  }
+}
+
+.sideBtnIcon {
+  font-size: 52rpx;
+  margin-bottom: $spacing-xs;
+}
+
+.sideBtnText {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.captureBtnWrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.captureBtn {
+  @include button-reset;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: $radius-round;
+  background: transparent;
+  border: 12rpx solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.captureBtnInner {
+  width: 260rpx;
+  height: 260rpx;
+  border-radius: $radius-round;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  transition: all $transition-base;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.captureBtnRecording {
+  .captureBtnInner {
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: $radius-lg;
+    background: $color-error;
+  }
+}
+
+.captureBtnIcon {
+  font-size: 100rpx;
+  color: #ffffff;
+}
+
+.voiceBtnRow {
+  margin-top: $spacing-xl;
+  width: 100%;
+}
+
+.voiceBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-lg;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border: none;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  box-shadow: 0 4rpx 20rpx rgba(230, 126, 34, 0.3);
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.voiceBtnIcon {
+  font-size: 52rpx;
+}
+
+.voiceBtnText {
+  font-size: $font-size-xl;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+}
+
+.autoSegmentTip {
+  margin-top: $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+}
+
+.autoSegmentText {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.5);
+}

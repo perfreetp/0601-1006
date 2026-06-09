@@ -1,0 +1,237 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFF3E0 0%, $color-bg-page 20%);
+  padding-bottom: 40rpx;
+}
+
+.profileSection {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $page-padding;
+  padding-top: calc(#{$spacing-xl} + 40rpx);
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: $radius-round;
+  border: 6rpx solid rgba(255, 255, 255, 0.4);
+  margin-right: $spacing-lg;
+  flex-shrink: 0;
+}
+
+.profileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: #ffffff;
+  margin-bottom: $spacing-xs;
+}
+
+.userDesc {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.statsRow {
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-lg;
+  padding: $spacing-md 0;
+  backdrop-filter: blur(10px);
+}
+
+.statItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 2rpx solid rgba(255, 255, 255, 0.2);
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.statNum {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: #ffffff;
+  margin-bottom: $spacing-xs;
+}
+
+.statLabel {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.sosSection {
+  padding: $spacing-lg $page-padding;
+  margin-top: -40rpx;
+  position: relative;
+  z-index: 10;
+}
+
+.sosCard {
+  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  border: 4rpx solid #FECACA;
+}
+
+.sosIcon {
+  font-size: 80rpx;
+  margin-right: $spacing-lg;
+}
+
+.sosContent {
+  flex: 1;
+}
+
+.sosTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: #991B1B;
+  margin-bottom: $spacing-xs;
+}
+
+.sosDesc {
+  font-size: $font-size-md;
+  color: #B91C1C;
+}
+
+.sosBtn {
+  @include button-reset;
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: #ffffff;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  height: $button-height-lg;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(239, 68, 68, 0.3);
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.menuSection {
+  padding: $spacing-md $page-padding;
+}
+
+.menuCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-lg;
+  border-bottom: 2rpx solid $color-divider;
+  transition: all $transition-base;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.menuIcon {
+  font-size: 48rpx;
+  margin-right: $spacing-md;
+  width: 64rpx;
+  text-align: center;
+}
+
+.menuContent {
+  flex: 1;
+}
+
+.menuTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.menuDesc {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.menuArrow {
+  font-size: $font-size-xl;
+  color: $color-text-tertiary;
+}
+
+.switchWrap {
+  display: flex;
+  align-items: center;
+}
+
+.switch {
+  width: 100rpx;
+  height: 60rpx;
+  border-radius: 999rpx;
+  background: $color-border;
+  padding: 6rpx;
+  position: relative;
+  transition: all $transition-base;
+}
+
+.switchActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+}
+
+.switchDot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-round;
+  background: #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  transition: all $transition-base;
+}
+
+.switchDotActive {
+  transform: translateX(40rpx);
+}
+
+.privacyStatus {
+  display: inline-flex;
+  align-items: center;
+  background: $color-bg-warm;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+  margin-left: $spacing-md;
+}
+
+.privacyStatusText {
+  font-size: $font-size-sm;
+  color: $color-primary-dark;
+  font-weight: $font-weight-medium;
+}

@@ -1,0 +1,269 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.videoPlayer {
+  width: 100%;
+  height: 500rpx;
+  background: #000;
+  position: relative;
+}
+
+.coverImg {
+  width: 100%;
+  height: 100%;
+}
+
+.playBtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-round;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playIcon {
+  font-size: 80rpx;
+  color: $color-primary;
+  margin-left: 8rpx;
+}
+
+.content {
+  padding: $spacing-lg $page-padding;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+  line-height: $line-height-tight;
+}
+
+.authorRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+}
+
+.authorInfo {
+  flex: 1;
+}
+
+.authorName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.createTime {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-top: $spacing-xs;
+}
+
+.metaCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.metaIcon {
+  font-size: 40rpx;
+  margin-right: $spacing-sm;
+}
+
+.metaText {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+}
+
+.tagsSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.tag {
+  font-size: $font-size-md;
+  color: $color-primary-dark;
+  background: $color-tag-bg;
+  padding: $spacing-xs $spacing-lg;
+  border-radius: $radius-button;
+}
+
+.commentsSection {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.commentItem {
+  display: flex;
+  padding: $spacing-md 0;
+  border-bottom: 2rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.commentAvatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.commentContent {
+  flex: 1;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.commentName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-right: $spacing-md;
+}
+
+.commentTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.voiceBubble {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-lg;
+  min-width: 200rpx;
+}
+
+.voiceIcon {
+  font-size: 36rpx;
+  margin-right: $spacing-sm;
+  color: #ffffff;
+}
+
+.voiceDuration {
+  font-size: $font-size-md;
+  color: #ffffff;
+  font-weight: $font-weight-medium;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc(#{$spacing-md} + 40rpx);
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: $spacing-md;
+}
+
+.actionBtn {
+  @include button-reset;
+  flex: 1;
+  background: $color-bg-warm;
+  border: 4rpx solid $color-border;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.actionBtnActive {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border-color: $color-primary;
+  color: #ffffff;
+}
+
+.voiceBtn {
+  @include button-reset;
+  flex: 2;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border: none;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  color: #ffffff;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  box-shadow: 0 4rpx 20rpx rgba(230, 126, 34, 0.3);
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
