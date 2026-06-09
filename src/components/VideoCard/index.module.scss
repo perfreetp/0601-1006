@@ -167,3 +167,33 @@
   width: 48rpx;
   text-align: center;
 }
+
+.cardVisibility {
+  position: absolute;
+  top: $spacing-sm;
+  left: $spacing-sm;
+  padding: 6rpx $spacing-sm;
+  border-radius: $radius-button;
+  max-width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.cardVisibilityText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: #ffffff;
+}
+
+.cardVisPrivate {
+  background: rgba(44, 62, 80, 0.88);
+}
+
+.cardVisFamily {
+  background: rgba(230, 126, 34, 0.9);
+}
+
+.cardVisPublic {
+  background: rgba(52, 152, 219, 0.9);
+}

@@ -60,6 +60,10 @@ export interface VoiceComment {
   duration: number;
   audioUrl: string;
   createTime: string;
+  replyTo?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface FilterOption {

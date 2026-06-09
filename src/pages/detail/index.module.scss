@@ -347,6 +347,137 @@
   display: block;
 }
 
+.noPermission {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xxl;
+  text-align: center;
+  gap: $spacing-md;
+}
+
+.noPermissionIcon {
+  font-size: 140rpx;
+  margin-bottom: $spacing-md;
+}
+
+.noPermissionTitle {
+  font-size: $font-size-xxl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.noPermissionDesc {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+  max-width: 520rpx;
+}
+
+.noPermissionHint {
+  font-size: $font-size-md;
+  color: $color-primary-dark;
+  background: $color-bg-warm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  margin-top: $spacing-sm;
+  line-height: $line-height-tight;
+}
+
+.noPermissionActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+}
+
+.noPermissionBtn {
+  @include button-reset;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: #ffffff;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  height: $button-height-lg;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(230, 126, 34, 0.3);
+}
+
+.noPermissionBtnSecondary {
+  @include button-reset;
+  background: $color-bg-page;
+  color: $color-text-secondary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  height: $button-height-lg;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  border: 4rpx solid $color-border;
+}
+
+.commentNameRow {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.commentReplyTag {
+  font-size: $font-size-xs;
+  color: $color-primary-dark;
+  background: $color-bg-warm;
+  padding: 2rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-medium;
+}
+
+.commentActions {
+  display: flex;
+  margin-top: $spacing-xs;
+}
+
+.commentReplyBtn {
+  @include button-reset;
+  background: none;
+  border: none;
+  color: $color-text-tertiary;
+  font-size: $font-size-xs;
+  padding: 4rpx 0;
+  margin: 0;
+  height: auto;
+  line-height: 1.4;
+  text-align: left;
+
+  &:active {
+    color: $color-primary;
+  }
+}
+
+.replyingToBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-warm;
+  border-radius: $radius-md;
+  margin-bottom: $spacing-sm;
+}
+
+.replyingIcon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.replyingText {
+  flex: 1;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary-dark;
+}
+
 .recordingOverlay {
   position: fixed;
   top: 0;

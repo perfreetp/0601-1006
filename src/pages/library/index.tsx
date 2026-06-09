@@ -16,13 +16,17 @@ const formatDuration = (seconds: number): string => {
 
 const LibraryPage: React.FC = () => {
   const videos = useAppStore((s) => s.videos);
-  const currentUser = useAppStore((s) => s.currentUser);
   const familyMembers = useAppStore((s) => s.familyMembers);
+  const viewAsUserId = useAppStore((s) => s.viewAsUserId);
+  const getEffectiveUser = useAppStore((s) => s.getEffectiveUser);
   const toggleCollect = useAppStore((s) => s.toggleCollect);
 
+  const effectiveUser = useMemo(() => getEffectiveUser(), [getEffectiveUser, viewAsUserId]);
+  const isViewingAs = viewAsUserId !== null;
+
   const myVideos = useMemo(() => {
-    return videos.filter((v) => v.author.id === currentUser.id && !v.isDraft);
-  }, [videos, currentUser]);
+    return videos.filter((v) => v.author.id === effectiveUser.id && !v.isDraft);
+  }, [videos, effectiveUser]);
 
   const getVisibleRangeText = (video: typeof myVideos[number]) => {
     if (video.visibility === 'private') return '';
@@ -98,8 +102,18 @@ const LibraryPage: React.FC = () => {
     <View className={styles.page}>
       <View className={styles.header}>
         <Text className={styles.title}>📁 我的作品</Text>
-        <Text className={styles.subtitle}>共 {myVideos.length} 个视频，记录美好时光</Text>
+        <Text className={styles.subtitle}>
+          {isViewingAs ? `正在预览「${effectiveUser.name}」的作品库` : `共 ${myVideos.length} 个视频，记录美好时光`}
+        </Text>
       </View>
+      {isViewingAs && (
+        <View className={styles.viewHintBar}>
+          <Text className={styles.viewHintIcon}>👓</Text>
+          <Text className={styles.viewHintText}>
+            家人视角预览：查看「{effectiveUser.name}」的作品，切回自己可管理作品
+          </Text>
+        </View>
+      )}
 
       <View className={styles.quickActions}>
         <View

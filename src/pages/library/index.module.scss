@@ -372,3 +372,27 @@
     transform: scale(0.98);
   }
 }
+
+.viewHintBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: rgba(52, 152, 219, 0.12);
+  border: 3rpx solid rgba(52, 152, 219, 0.3);
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  margin: 0 $spacing-md $spacing-md;
+}
+
+.viewHintIcon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.viewHintText {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: #2980B9;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+}

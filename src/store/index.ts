@@ -42,6 +42,7 @@ interface AppState {
   privacy: PrivacySettings;
   familyMembers: FamilyMember[];
   currentUser: { id: string; name: string; avatar: string };
+  viewAsUserId: string | null;
 
   setCurrentEditingVideo: (video: VideoItem | null) => void;
   createDraftVideo: (duration: number, fromAlbum?: boolean) => VideoItem;
@@ -55,6 +56,9 @@ interface AppState {
 
   updatePrivacy: (updates: Partial<PrivacySettings>) => void;
   savePrivacy: () => void;
+
+  setViewAsUser: (userId: string | null) => void;
+  getEffectiveUser: () => { id: string; name: string; avatar: string };
 
   getMyVideos: () => VideoItem[];
   getVisibleVideosForMe: () => VideoItem[];
@@ -94,8 +98,21 @@ export const useAppStore = create<AppState>((set, get) => ({
   privacy: loadPrivacy(),
   familyMembers: mockFamilyMembers,
   currentUser: CURRENT_USER,
+  viewAsUserId: null,
 
   setCurrentEditingVideo: (video) => set({ currentEditingVideo: video }),
+
+  setViewAsUser: (userId) => set({ viewAsUserId: userId }),
+
+  getEffectiveUser: () => {
+    const { viewAsUserId, familyMembers, currentUser } = get();
+    if (!viewAsUserId) return currentUser;
+    const member = familyMembers.find((m) => m.id === viewAsUserId);
+    if (member) {
+      return { id: member.id, name: member.name, avatar: member.avatar };
+    }
+    return currentUser;
+  },
 
   createDraftVideo: (duration, fromAlbum = false) => {
     const now = new Date();
@@ -201,19 +218,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     try { Taro.setStorageSync(PRIVACY_STORAGE_KEY, get().privacy); } catch (e) {}
   },
 
-  getMyVideos: () => get().videos.filter((v) => v.author.id === CURRENT_USER.id && !v.isDraft),
+  getMyVideos: () => {
+    const effectiveUser = get().getEffectiveUser();
+    return get().videos.filter((v) => v.author.id === effectiveUser.id && !v.isDraft);
+  },
 
   getVisibleVideosForMe: () => {
-    const { privacy, currentUser, videos } = get();
+    const { privacy, videos } = get();
+    const effectiveUser = get().getEffectiveUser();
     return videos.filter((v) => {
       if (v.isDraft) return false;
-      if (v.author.id === currentUser.id) return true;
+      if (v.visibility === 'private') {
+        return v.author.id === effectiveUser.id;
+      }
+      if (v.author.id === effectiveUser.id) return true;
       if (v.visibility === 'public') {
         return !privacy.blockStranger ? true : false;
       }
       if (v.visibility === 'family') {
         if (!v.visibleToMemberIds || v.visibleToMemberIds.length === 0) return true;
-        return v.visibleToMemberIds.includes(currentUser.id);
+        return v.visibleToMemberIds.includes(effectiveUser.id);
       }
       return false;
     });

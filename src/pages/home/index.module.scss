@@ -152,3 +152,146 @@
     transform: scale(0.98);
   }
 }
+
+.viewSwitcher {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.viewSwitcherHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.viewSwitcherLabel {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.viewCurrentUser {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.viewAvatar {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: $radius-round;
+  border: 2rpx solid $color-border;
+}
+
+.viewUserName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-primary-dark;
+}
+
+.viewResetBtn {
+  @include button-reset;
+  background: $color-bg-warm;
+  color: $color-primary-dark;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  height: 48rpx;
+  padding: 0 $spacing-sm;
+  border-radius: $radius-button;
+  border: 2rpx solid $color-primary-light;
+}
+
+.viewUserScroll {
+  width: 100%;
+}
+
+.viewUserList {
+  display: flex;
+  gap: $spacing-sm;
+  padding-bottom: $spacing-xs;
+}
+
+.viewUserItem {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  background: $color-bg-page;
+  min-width: 120rpx;
+  transition: all $transition-base;
+  position: relative;
+  border: 3rpx solid transparent;
+}
+
+.viewUserItemActive {
+  background: $color-bg-warm;
+  border-color: $color-primary-light;
+}
+
+.viewUserAvatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-round;
+  border: 3rpx solid $color-border;
+}
+
+.viewUserItemActive .viewUserAvatar {
+  border-color: $color-primary;
+}
+
+.viewUserNameSmall {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.viewUserLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.viewUserCheck {
+  position: absolute;
+  top: 4rpx;
+  right: 4rpx;
+  width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  background: $color-primary;
+  color: #ffffff;
+  border-radius: $radius-round;
+  font-size: 20rpx;
+  font-weight: $font-weight-bold;
+}
+
+.viewHintBar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: rgba(52, 152, 219, 0.12);
+  border: 3rpx solid rgba(52, 152, 219, 0.3);
+  border-radius: $radius-md;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.viewHintIcon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.viewHintText {
+  flex: 1;
+  font-size: $font-size-sm;
+  color: #2980B9;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+}

@@ -16,6 +16,8 @@ const SubtitlePage: React.FC = () => {
   const updateEditingVideo = useAppStore((s) => s.updateEditingVideo);
   const publishCurrentVideo = useAppStore((s) => s.publishCurrentVideo);
 
+  const [showPublishResult, setShowPublishResult] = useState(false);
+  const [publishedVideo, setPublishedVideo] = useState<VideoItem | null>(null);
   const [subtitleText, setSubtitleText] = useState(editingVideo?.subtitles?.[0]?.text || '');
   const [fontSize, setFontSize] = useState<FontSize>((editingVideo?.subtitles?.[0]?.fontSize as FontSize) || 'xxlarge');
   const [selectedFilter, setSelectedFilter] = useState<string>(
@@ -62,6 +64,20 @@ const SubtitlePage: React.FC = () => {
     family: { label: '仅亲友', icon: '👨‍👩‍👧', desc: '仅选中的亲友可见' },
     private: { label: '仅自己', icon: '🔒', desc: '只有自己能看' }
   };
+
+  const publishResultMembers = useMemo(() => {
+    if (!publishedVideo || publishedVideo.visibility !== 'family') return [];
+    return familyMembers.filter((m) => publishedVideo.visibleToMemberIds?.includes(m.id)) || [];
+  }, [publishedVideo, familyMembers]);
+
+  const publishResultRangeText = useMemo(() => {
+    if (!publishedVideo) return '';
+    if (publishedVideo.visibility === 'public') return '🌍 所有人可见';
+    if (publishedVideo.visibility === 'private') return '🔒 仅自己可见（保存在作品库）';
+    if (publishResultMembers.length === 0) return '👨‍👩‍👧 全部亲友可见';
+    const names = publishResultMembers.map((m) => `${m.name}（${m.relation}）`).join('、');
+    return `👨‍👩‍👧 ${publishResultMembers.length}位亲友可见：${names}`;
+  }, [publishedVideo, publishResultMembers]);
 
   const handleToggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -183,10 +199,9 @@ const SubtitlePage: React.FC = () => {
             const published = publishCurrentVideo();
             Taro.hideLoading();
             if (published) {
+              setPublishedVideo(published);
+              setShowPublishResult(true);
               Taro.showToast({ title: '发布成功！', icon: 'success' });
-              setTimeout(() => {
-                Taro.switchTab({ url: '/pages/home/index' });
-              }, 1500);
             } else {
               Taro.showToast({ title: '发布失败，请重试', icon: 'none' });
             }
@@ -453,6 +468,87 @@ const SubtitlePage: React.FC = () => {
           🚀 {visibility === 'public' ? '发布公开' : visibility === 'private' ? '保存仅自己看' : '发布给亲友'}
         </Button>
       </View>
+
+      {showPublishResult && publishedVideo && (
+        <View className={styles.resultOverlay}>
+          <View className={styles.resultCard}>
+            <View className={styles.resultIcon}>🎉</View>
+            <Text className={styles.resultTitle}>发布成功！</Text>
+            <Text className={styles.resultSubtitle}>作品已保存，按设置的可见范围展示</Text>
+
+            <View className={styles.resultPreview}>
+              <Image className={styles.resultCover} src={publishedVideo.coverUrl} mode="aspectFill" />
+              <View className={styles.resultInfo}>
+                <Text className={styles.resultVideoTitle}>{publishedVideo.title}</Text>
+                <Text className={styles.resultMeta}>
+                  📅 {publishedVideo.date || publishedVideo.createTime}
+                  {publishedVideo.location ? ` · 📍 ${publishedVideo.location}` : ''}
+                </Text>
+              </View>
+            </View>
+
+            <View className={styles.resultRange}>
+              <Text className={styles.resultRangeLabel}>可见范围</Text>
+              <Text className={styles.resultRangeText}>{publishResultRangeText}</Text>
+            </View>
+
+            {publishedVideo.visibility === 'family' && publishResultMembers.length > 0 && (
+              <View className={styles.resultMemberList}>
+                {publishResultMembers.map((m) => (
+                  <View key={m.id} className={styles.resultMemberItem}>
+                    <Image className={styles.resultMemberAvatar} src={m.avatar} mode="aspectFill" />
+                    <View className={styles.resultMemberInfo}>
+                      <Text className={styles.resultMemberName}>{m.name}</Text>
+                      <Text className={styles.resultMemberRelation}>{m.relation}</Text>
+                    </View>
+                    <Text className={styles.resultMemberCheck}>✓</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            <View className={styles.resultActions}>
+              <Button
+                className={styles.resultBtnSecondary}
+                onClick={() => {
+                  setShowPublishResult(false);
+                  setPublishedVideo(null);
+                }}
+              >
+                ✏️ 继续编辑
+              </Button>
+              <Button
+                className={styles.resultBtnPrimary}
+                onClick={() => {
+                  setShowPublishResult(false);
+                  setPublishedVideo(null);
+                  if (publishedVideo.visibility === 'private') {
+                    Taro.switchTab({ url: '/pages/library/index' });
+                  } else {
+                    Taro.switchTab({ url: '/pages/home/index' });
+                  }
+                }}
+              >
+                {publishedVideo.visibility === 'private' ? '📁 去作品库查看' : '👨‍👩‍👧 去亲友圈看看'}
+              </Button>
+            </View>
+            <View className={styles.resultAltActions}>
+              <Button
+                className={styles.resultAltBtn}
+                onClick={() => {
+                  setShowPublishResult(false);
+                  setPublishedVideo(null);
+                  Taro.switchTab({
+                    url: publishedVideo.visibility === 'private' ? '/pages/home/index' : '/pages/library/index'
+                  });
+                }}
+              >
+                {publishedVideo.visibility === 'private' ? '或去亲友圈看看' : '或去作品库管理'}
+              </Button>
+            </View>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
