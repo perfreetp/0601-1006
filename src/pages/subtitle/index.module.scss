@@ -334,6 +334,202 @@
   white-space: nowrap;
 }
 
+.noDraftTip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-lg;
+  gap: $spacing-md;
+}
+
+.noDraftIcon {
+  font-size: 120rpx;
+}
+
+.noDraftText {
+  font-size: $font-size-lg;
+  color: #ffffff;
+  margin-bottom: $spacing-sm;
+}
+
+.goCaptureBtn {
+  @include button-reset;
+  background: $color-primary;
+  color: #ffffff;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  height: $button-height-md;
+  padding: 0 $spacing-xl;
+  border-radius: $radius-button;
+  border: none;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.visibilityRow {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.visibilityBtn {
+  @include button-reset;
+  flex: 1;
+  background: $color-bg-page;
+  border: 4rpx solid $color-border;
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-sm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xs;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.visibilityBtnActive {
+  background: $color-bg-warm;
+  border-color: $color-primary;
+}
+
+.visibilityIcon {
+  font-size: 56rpx;
+}
+
+.visibilityLabel {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.visibilityDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  text-align: center;
+}
+
+.memberSection {
+  margin-top: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+}
+
+.memberSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xs;
+}
+
+.memberSectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.selectAllBtn {
+  @include button-reset;
+  background: transparent;
+  border: none;
+  color: $color-primary;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  padding: 0;
+  height: auto;
+}
+
+.selectedCount {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-md;
+}
+
+.memberList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.memberItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-md;
+  border: 4rpx solid transparent;
+  transition: all $transition-base;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.memberItemSelected {
+  border-color: $color-primary;
+  background: $color-bg-warm;
+}
+
+.memberAvatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: $radius-round;
+  margin-right: $spacing-md;
+}
+
+.memberInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.memberName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.memberRelation {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.memberCheck {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: $radius-round;
+  border: 4rpx solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-card;
+  transition: all $transition-base;
+}
+
+.memberCheckSelected {
+  background: $color-primary;
+  border-color: $color-primary;
+}
+
+.checkIcon {
+  font-size: $font-size-md;
+  color: #ffffff;
+  font-weight: $font-weight-bold;
+}
+
 .bottomBar {
   position: fixed;
   bottom: 0;

@@ -23,6 +23,16 @@ export interface VideoItem {
   oldPhotoCompare?: boolean;
   segments?: VideoSegment[];
   visibility: 'public' | 'family' | 'private';
+  visibleToMemberIds?: string[];
+  isDraft?: boolean;
+}
+
+export interface PrivacySettings {
+  blockStranger: boolean;
+  allowComment: boolean;
+  allowShare: boolean;
+  defaultVisibility: 'public' | 'family' | 'private';
+  defaultVisibleToMemberIds?: string[];
 }
 
 export interface VideoSegment {

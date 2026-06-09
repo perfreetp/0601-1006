@@ -4,12 +4,16 @@ import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 import VideoCard from '@/components/VideoCard';
-import { mockVideos, mockFamilyTags } from '@/data/videos';
-import { VideoItem } from '@/types/video';
+import { mockFamilyTags } from '@/data/videos';
+import { useAppStore } from '@/store';
 
 const HomePage: React.FC = () => {
-  const [videos, setVideos] = useState<VideoItem[]>(mockVideos);
+  const getVisibleVideosForMe = useAppStore((s) => s.getVisibleVideosForMe);
+  const toggleLike = useAppStore((s) => s.toggleLike);
+
   const [activeFilter, setActiveFilter] = useState<string>('全部');
+
+  const videos = useMemo(() => getVisibleVideosForMe(), [getVisibleVideosForMe]);
 
   const allFilters = useMemo(() => ['全部', ...mockFamilyTags], []);
 
@@ -25,17 +29,7 @@ const HomePage: React.FC = () => {
 
   const handleLike = (id: string) => {
     console.log('[HomePage] 点赞视频:', id);
-    setVideos((prev) =>
-      prev.map((v) =>
-        v.id === id
-          ? {
-              ...v,
-              isLiked: !v.isLiked,
-              likes: v.isLiked ? v.likes - 1 : v.likes + 1
-            }
-          : v
-      )
-    );
+    toggleLike(id);
   };
 
   const handleFilterClick = (tag: string) => {
@@ -98,7 +92,11 @@ const HomePage: React.FC = () => {
       ) : (
         <View className={styles.empty}>
           <Text className={styles.emptyIcon}>📭</Text>
-          <Text className={styles.emptyText}>还没有相关视频，快去发布吧！</Text>
+          <Text className={styles.emptyText}>
+            {activeFilter === '全部'
+              ? '亲友圈还没有视频，快去发布第一个吧！'
+              : `还没有与"${activeFilter}"相关的视频`}
+          </Text>
           <Button className={styles.emptyBtn} onClick={handlePublish}>
             立即拍摄
           </Button>

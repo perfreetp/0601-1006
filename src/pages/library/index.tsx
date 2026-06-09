@@ -3,8 +3,8 @@ import { View, Text, Button, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import classnames from 'classnames';
 import styles from './index.module.scss';
-import { mockVideos, mockFamilyTags } from '@/data/videos';
-import { VideoItem } from '@/types/video';
+import { mockFamilyTags } from '@/data/videos';
+import { useAppStore } from '@/store';
 
 type LibraryTab = 'all' | 'collect' | 'person';
 
@@ -15,22 +15,26 @@ const formatDuration = (seconds: number): string => {
 };
 
 const LibraryPage: React.FC = () => {
-  const [videos, setVideos] = useState<VideoItem[]>(mockVideos.filter(v => v.author.id === 'u1'));
+  const getMyVideos = useAppStore((s) => s.getMyVideos);
+  const toggleCollect = useAppStore((s) => s.toggleCollect);
+
+  const myVideos = useMemo(() => getMyVideos(), [getMyVideos]);
+
   const [activeTab, setActiveTab] = useState<LibraryTab>('all');
   const [activePersonFilter, setActivePersonFilter] = useState<string>('全部');
 
   const personFilters = useMemo(() => ['全部', ...mockFamilyTags.slice(0, 8)], []);
 
   const displayVideos = useMemo(() => {
-    let result = videos;
+    let result = myVideos;
     if (activeTab === 'collect') {
-      result = result.filter(v => v.isCollected);
+      result = result.filter((v) => v.isCollected);
     }
     if (activeTab === 'person' && activePersonFilter !== '全部') {
-      result = result.filter(v => v.familyTags.includes(activePersonFilter));
+      result = result.filter((v) => v.familyTags.includes(activePersonFilter));
     }
     return result;
-  }, [videos, activeTab, activePersonFilter]);
+  }, [myVideos, activeTab, activePersonFilter]);
 
   const handleVideoClick = (id: string) => {
     console.log('[LibraryPage] 点击视频:', id);
@@ -40,10 +44,12 @@ const LibraryPage: React.FC = () => {
   const handleToggleCollect = (e: any, id: string) => {
     e.stopPropagation?.();
     console.log('[LibraryPage] 切换收藏:', id);
-    setVideos((prev) =>
-      prev.map((v) => (v.id === id ? { ...v, isCollected: !v.isCollected } : v))
-    );
-    Taro.showToast({ title: videos.find(v => v.id === id)?.isCollected ? '已取消收藏' : '已收藏', icon: 'none' });
+    const target = myVideos.find((v) => v.id === id);
+    toggleCollect(id);
+    Taro.showToast({
+      title: target?.isCollected ? '已取消收藏' : '已收藏',
+      icon: 'none'
+    });
   };
 
   const handleGenerateMemory = () => {
@@ -73,11 +79,14 @@ const LibraryPage: React.FC = () => {
     <View className={styles.page}>
       <View className={styles.header}>
         <Text className={styles.title}>📁 我的作品</Text>
-        <Text className={styles.subtitle}>共 {videos.length} 个视频，记录美好时光</Text>
+        <Text className={styles.subtitle}>共 {myVideos.length} 个视频，记录美好时光</Text>
       </View>
 
       <View className={styles.quickActions}>
-        <View className={classnames(styles.actionCard, styles.actionCardPrimary)} onClick={handleGenerateMemory}>
+        <View
+          className={classnames(styles.actionCard, styles.actionCardPrimary)}
+          onClick={handleGenerateMemory}
+        >
           <Text className={styles.actionIcon}>🎬</Text>
           <Text className={styles.actionTitle}>年度回忆</Text>
           <Text className={styles.actionDesc}>一键生成精彩集锦</Text>
@@ -105,13 +114,13 @@ const LibraryPage: React.FC = () => {
           className={classnames(styles.tab, activeTab === 'all' && styles.tabActive)}
           onClick={() => setActiveTab('all')}
         >
-          📹 全部作品
+          📹 全部作品 ({myVideos.length})
         </Button>
         <Button
           className={classnames(styles.tab, activeTab === 'collect' && styles.tabActive)}
           onClick={() => setActiveTab('collect')}
         >
-          ⭐ 重要收藏
+          ⭐ 重要收藏 ({myVideos.filter((v) => v.isCollected).length})
         </Button>
         <Button
           className={classnames(styles.tab, activeTab === 'person' && styles.tabActive)}
@@ -142,15 +151,28 @@ const LibraryPage: React.FC = () => {
           {displayVideos.map((video) => (
             <View key={video.id} className={styles.videoItem} onClick={() => handleVideoClick(video.id)}>
               <View className={styles.videoCover}>
-                <Image className={styles.coverImg} src={video.coverUrl} mode="aspectFill" onError={(e) => console.error('[Library] 图片加载失败:', e)} />
+                <Image
+                  className={styles.coverImg}
+                  src={video.coverUrl}
+                  mode="aspectFill"
+                  onError={(e) => console.error('[Library] 图片加载失败:', e)}
+                />
                 <View className={styles.collectBtn} onClick={(e) => handleToggleCollect(e, video.id)}>
                   <Text className={styles.collectIcon}>{video.isCollected ? '⭐' : '☆'}</Text>
                 </View>
                 <Text className={styles.durationBadge}>{formatDuration(video.duration)}</Text>
+                {video.visibility === 'private' && (
+                  <Text className={styles.visibilityBadge}>🔒 仅自己</Text>
+                )}
+                {video.visibility === 'family' && video.visibleToMemberIds && video.visibleToMemberIds.length > 0 && (
+                  <Text className={styles.visibilityBadgeFamily}>👨‍👩‍👧 {video.visibleToMemberIds.length}人</Text>
+                )}
               </View>
               <View className={styles.videoInfo}>
                 <Text className={styles.videoTitle}>{video.title}</Text>
-                <Text className={styles.videoMeta}>{video.createTime} · {video.location || '未标注地点'}</Text>
+                <Text className={styles.videoMeta}>
+                  {video.createTime} · {video.location || '未标注地点'}
+                </Text>
               </View>
             </View>
           ))}
@@ -159,7 +181,11 @@ const LibraryPage: React.FC = () => {
         <View className={styles.empty}>
           <Text className={styles.emptyIcon}>📭</Text>
           <Text className={styles.emptyText}>
-            {activeTab === 'collect' ? '还没有收藏的视频\n点击星标收藏重要视频吧' : activeTab === 'person' ? '该分类下暂无视频' : '还没有作品，快去拍摄第一个视频吧！'}
+            {activeTab === 'collect'
+              ? '还没有收藏的视频\n点击星标收藏重要视频吧'
+              : activeTab === 'person'
+              ? '该分类下暂无视频'
+              : '还没有作品，快去拍摄第一个视频吧！'}
           </Text>
           <Button className={styles.emptyBtn} onClick={handleGoCapture}>
             📹 立即拍摄

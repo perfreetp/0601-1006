@@ -267,3 +267,179 @@
     transform: scale(0.98);
   }
 }
+
+.voiceBtnRecording {
+  background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+  animation: recBtnPulse 1s infinite;
+}
+
+@keyframes recBtnPulse {
+  0%, 100% { box-shadow: 0 4rpx 20rpx rgba(231, 76, 60, 0.4); }
+  50% { box-shadow: 0 4rpx 40rpx rgba(231, 76, 60, 0.7); }
+}
+
+.voiceBubblePlaying {
+  animation: playingBubble 0.8s infinite alternate;
+}
+
+@keyframes playingBubble {
+  from { transform: scale(1); }
+  to { transform: scale(1.02); }
+}
+
+.voiceWave {
+  flex: 1;
+  height: 12rpx;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: $radius-round;
+  margin: 0 $spacing-sm;
+  overflow: hidden;
+}
+
+.voiceWaveFill {
+  height: 100%;
+  background: #ffffff;
+  border-radius: $radius-round;
+  transition: width 0.3s ease;
+}
+
+.visibilityTagPrivate {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  background: rgba(231, 76, 60, 0.9);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+  color: #ffffff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.visibilityTagFamily {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  background: rgba(230, 126, 34, 0.9);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+  color: #ffffff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
+.noComment {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  text-align: center;
+  padding: $spacing-xl;
+  display: block;
+}
+
+.recordingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recordingPanel {
+  width: 80%;
+  background: $color-bg-card;
+  border-radius: $radius-xl;
+  padding: $spacing-xxl $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+  box-shadow: $shadow-popup;
+}
+
+.recordingIndicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.recordingDot {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: $radius-round;
+  background: $color-error;
+  animation: recDotPulse 1s infinite;
+}
+
+@keyframes recDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.recordingTimeText {
+  font-size: 80rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  font-family: monospace;
+}
+
+.recordingHint {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}
+
+.recordingFinishedIcon {
+  font-size: 120rpx;
+}
+
+.recordingFinishedText {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.recordingActions {
+  display: flex;
+  gap: $spacing-lg;
+  width: 100%;
+  margin-top: $spacing-md;
+}
+
+.cancelRecBtn {
+  @include button-reset;
+  flex: 1;
+  background: $color-bg-page;
+  border: 4rpx solid $color-border;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  color: $color-text-secondary;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    background: $color-bg-hover;
+  }
+}
+
+.finishRecBtn {
+  @include button-reset;
+  flex: 1;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  border: none;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  color: #ffffff;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  box-shadow: 0 4rpx 20rpx rgba(230, 126, 34, 0.3);
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

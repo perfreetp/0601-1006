@@ -85,6 +85,28 @@
   line-height: $line-height-tight;
 }
 
+.settingStatusBadge {
+  display: inline-block;
+  margin-top: $spacing-xs;
+  font-size: $font-size-xs;
+  color: $color-primary;
+  background: $color-bg-warm;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-semibold;
+  align-self: flex-start;
+}
+
+.settingHeader {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+}
+
+.settingHeaderContent {
+  flex: 1;
+}
+
 .switchWrap {
   display: flex;
   align-items: center;
@@ -128,12 +150,20 @@
   flex: 1;
   background: $color-bg-page;
   border: 4rpx solid $color-border;
-  height: $button-height-md;
-  border-radius: $radius-button;
+  height: auto;
+  min-height: 200rpx;
+  padding: $spacing-md $spacing-sm;
+  border-radius: $radius-lg;
   color: $color-text-secondary;
   font-size: $font-size-md;
   font-weight: $font-weight-medium;
   transition: all $transition-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  position: relative;
 
   &:active {
     opacity: 0.8;
@@ -141,8 +171,64 @@
 }
 
 .optionBtnActive {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  background: $color-bg-warm;
   border-color: $color-primary;
-  color: #ffffff;
+  color: $color-text-primary;
+}
+
+.optionIcon {
+  font-size: 56rpx;
+}
+
+.optionLabel {
+  font-size: $font-size-lg;
   font-weight: $font-weight-semibold;
+}
+
+.optionBtnActive .optionLabel {
+  color: $color-primary-dark;
+}
+
+.optionDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  text-align: center;
+}
+
+.optionCheck {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  background: $color-primary;
+  color: #ffffff;
+  border-radius: $radius-round;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+}
+
+.saveTipCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  background: rgba(46, 204, 113, 0.1);
+  border: 4rpx solid rgba(46, 204, 113, 0.3);
+  border-radius: $radius-lg;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.saveTipIcon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.saveTipText {
+  flex: 1;
+  font-size: $font-size-md;
+  color: #27AE60;
+  font-weight: $font-weight-medium;
 }
