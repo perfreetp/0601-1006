@@ -327,6 +327,18 @@
   font-weight: $font-weight-semibold;
 }
 
+.visibilityTagPublic {
+  position: absolute;
+  top: $spacing-md;
+  left: $spacing-md;
+  background: rgba(52, 152, 219, 0.9);
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-button;
+  color: #ffffff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+}
+
 .noComment {
   font-size: $font-size-md;
   color: $color-text-tertiary;

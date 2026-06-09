@@ -380,3 +380,53 @@
   background: linear-gradient(135deg, #27AE60 0%, #2ECC71 100%);
   box-shadow: 0 4rpx 20rpx rgba(46, 204, 113, 0.4);
 }
+
+.voiceTestPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  min-width: 260rpx;
+}
+
+.voiceTestTitle {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: $font-weight-semibold;
+}
+
+.voiceTestBtns {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  width: 100%;
+}
+
+.voiceTestBtn {
+  @include button-reset;
+  width: 100%;
+  height: 64rpx;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  border-radius: $radius-button;
+  color: #ffffff;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:active {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.97);
+  }
+}
+
+.voiceTestBtnNoise {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.voiceTestBtnDisabled {
+  opacity: 0.4;
+  pointer-events: none;
+}

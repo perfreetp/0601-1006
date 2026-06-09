@@ -21,11 +21,22 @@ const DetailPage: React.FC = () => {
 
   const videos = useAppStore((s) => s.videos);
   const currentUser = useAppStore((s) => s.currentUser);
+  const familyMembers = useAppStore((s) => s.familyMembers);
   const toggleLike = useAppStore((s) => s.toggleLike);
   const toggleCollect = useAppStore((s) => s.toggleCollect);
   const addVoiceComment = useAppStore((s) => s.addVoiceComment);
 
   const video = useMemo(() => videos.find((v) => v.id === videoId) || videos[0], [videos, videoId]);
+
+  const visibleMemberNames = useMemo(() => {
+    if (!video || video.visibility !== 'family' || !video.visibleToMemberIds) return '';
+    const names = video.visibleToMemberIds
+      .map((id) => familyMembers.find((m) => m.id === id)?.name)
+      .filter(Boolean) as string[];
+    if (names.length === 0) return '';
+    if (names.length <= 3) return names.join('、');
+    return `${names.slice(0, 3).join('、')}等${names.length}人`;
+  }, [video, familyMembers]);
 
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
   const [recordSeconds, setRecordSeconds] = useState(0);
@@ -179,7 +190,17 @@ const DetailPage: React.FC = () => {
         )}
         {video.visibility === 'family' && video.visibleToMemberIds && video.visibleToMemberIds.length > 0 && (
           <View className={styles.visibilityTagFamily}>
-            <Text>👨‍👩‍👧 {video.visibleToMemberIds.length}位亲友可见</Text>
+            <Text>👨‍👩‍👧 {visibleMemberNames || `${video.visibleToMemberIds.length}位亲友可见`}</Text>
+          </View>
+        )}
+        {video.visibility === 'family' && (!video.visibleToMemberIds || video.visibleToMemberIds.length === 0) && (
+          <View className={styles.visibilityTagFamily}>
+            <Text>👨‍👩‍👧 全部亲友可见</Text>
+          </View>
+        )}
+        {video.visibility === 'public' && (
+          <View className={styles.visibilityTagPublic}>
+            <Text>🌍 公开</Text>
           </View>
         )}
       </View>

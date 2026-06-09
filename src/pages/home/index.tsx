@@ -6,21 +6,37 @@ import styles from './index.module.scss';
 import VideoCard from '@/components/VideoCard';
 import { mockFamilyTags } from '@/data/videos';
 import { useAppStore } from '@/store';
+import type { VideoItem } from '@/types/video';
 
 const HomePage: React.FC = () => {
-  const getVisibleVideosForMe = useAppStore((s) => s.getVisibleVideosForMe);
+  const videos = useAppStore((s) => s.videos);
+  const privacy = useAppStore((s) => s.privacy);
+  const currentUser = useAppStore((s) => s.currentUser);
   const toggleLike = useAppStore((s) => s.toggleLike);
 
   const [activeFilter, setActiveFilter] = useState<string>('全部');
 
-  const videos = useMemo(() => getVisibleVideosForMe(), [getVisibleVideosForMe]);
+  const visibleVideos = useMemo(() => {
+    return videos.filter((v: VideoItem) => {
+      if (v.isDraft) return false;
+      if (v.author.id === currentUser.id) return true;
+      if (v.visibility === 'public') {
+        return !privacy.blockStranger ? true : false;
+      }
+      if (v.visibility === 'family') {
+        if (!v.visibleToMemberIds || v.visibleToMemberIds.length === 0) return true;
+        return v.visibleToMemberIds.includes(currentUser.id);
+      }
+      return false;
+    });
+  }, [videos, privacy, currentUser]);
 
   const allFilters = useMemo(() => ['全部', ...mockFamilyTags], []);
 
   const filteredVideos = useMemo(() => {
-    if (activeFilter === '全部') return videos;
-    return videos.filter((v) => v.familyTags.includes(activeFilter));
-  }, [videos, activeFilter]);
+    if (activeFilter === '全部') return visibleVideos;
+    return visibleVideos.filter((v) => v.familyTags.includes(activeFilter));
+  }, [visibleVideos, activeFilter]);
 
   const handlePublish = () => {
     console.log('[HomePage] 点击发布');

@@ -299,6 +299,22 @@
   padding: 4rpx $spacing-sm;
   border-radius: $radius-xs;
   font-weight: $font-weight-semibold;
+  max-width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.visibilityBadgePublic {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: rgba(52, 152, 219, 0.9);
+  color: #ffffff;
+  font-size: $font-size-xs;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-xs;
+  font-weight: $font-weight-semibold;
 }
 
 .videoInfo {

@@ -15,10 +15,29 @@ const formatDuration = (seconds: number): string => {
 };
 
 const LibraryPage: React.FC = () => {
-  const getMyVideos = useAppStore((s) => s.getMyVideos);
+  const videos = useAppStore((s) => s.videos);
+  const currentUser = useAppStore((s) => s.currentUser);
+  const familyMembers = useAppStore((s) => s.familyMembers);
   const toggleCollect = useAppStore((s) => s.toggleCollect);
 
-  const myVideos = useMemo(() => getMyVideos(), [getMyVideos]);
+  const myVideos = useMemo(() => {
+    return videos.filter((v) => v.author.id === currentUser.id && !v.isDraft);
+  }, [videos, currentUser]);
+
+  const getVisibleRangeText = (video: typeof myVideos[number]) => {
+    if (video.visibility === 'private') return '';
+    if (video.visibility === 'public') return '🌍 公开';
+    if (video.visibility === 'family') {
+      if (!video.visibleToMemberIds || video.visibleToMemberIds.length === 0) return '👨‍👩‍👧 全部';
+      const names = video.visibleToMemberIds
+        .map((id) => familyMembers.find((m) => m.id === id)?.name)
+        .filter(Boolean) as string[];
+      if (names.length === 0) return `👨‍👩‍👧 ${video.visibleToMemberIds.length}人`;
+      if (names.length <= 2) return `👨‍👩‍👧 ${names.join('、')}`;
+      return `👨‍👩‍👧 ${names.slice(0, 2).join('、')}等${names.length}人`;
+    }
+    return '';
+  };
 
   const [activeTab, setActiveTab] = useState<LibraryTab>('all');
   const [activePersonFilter, setActivePersonFilter] = useState<string>('全部');
@@ -164,9 +183,14 @@ const LibraryPage: React.FC = () => {
                 {video.visibility === 'private' && (
                   <Text className={styles.visibilityBadge}>🔒 仅自己</Text>
                 )}
-                {video.visibility === 'family' && video.visibleToMemberIds && video.visibleToMemberIds.length > 0 && (
-                  <Text className={styles.visibilityBadgeFamily}>👨‍👩‍👧 {video.visibleToMemberIds.length}人</Text>
+                {video.visibility === 'public' && (
+                  <Text className={styles.visibilityBadgePublic}>🌍 公开</Text>
                 )}
+                {(() => {
+                  const rangeText = getVisibleRangeText(video);
+                  if (!rangeText || video.visibility === 'private' || video.visibility === 'public') return null;
+                  return <Text className={styles.visibilityBadgeFamily}>{rangeText}</Text>;
+                })()}
               </View>
               <View className={styles.videoInfo}>
                 <Text className={styles.videoTitle}>{video.title}</Text>

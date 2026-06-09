@@ -8,12 +8,11 @@ import { useAppStore } from '@/store';
 type CaptureMode = 'video' | 'photo';
 type VoiceState = 'idle' | 'listening' | 'recognized';
 
-const VOICE_COMMANDS = [
-  { text: '开始拍摄', action: 'start' as const },
-  { text: '停止拍摄', action: 'stop' as const },
-  { text: '茄子', action: 'noise' as const },
-  { text: '今天天气真好', action: 'noise' as const }
-];
+type VoiceActionType = 'start' | 'stop' | 'noise';
+interface VoiceCommand {
+  text: string;
+  action: VoiceActionType;
+}
 
 const CapturePage: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -118,18 +117,17 @@ const CapturePage: React.FC = () => {
     setMode(newMode);
   };
 
-  const simulateVoiceCommand = useCallback(() => {
+  const handleVoiceCommand = useCallback((command: VoiceCommand) => {
     if (!voiceControlActive) {
-      setLastCommandResult({ text: '', success: false, msg: '语音控制已关闭，指令未生效' });
+      setLastCommandResult({ text: command.text, success: false, msg: '语音控制已关闭，指令未生效' });
       setTimeout(() => setLastCommandResult(null), 2000);
       return;
     }
-    const cmd = VOICE_COMMANDS[Math.floor(Math.random() * VOICE_COMMANDS.length)];
     setVoiceState('recognized');
-    setRecognizedText(cmd.text);
+    setRecognizedText(command.text);
 
-    if (cmd.action === 'noise') {
-      setLastCommandResult({ text: cmd.text, success: false, msg: '非拍摄指令，已忽略' });
+    if (command.action === 'noise') {
+      setLastCommandResult({ text: command.text, success: false, msg: '非拍摄指令，已忽略' });
       setTimeout(() => {
         setVoiceState(voiceControlActive ? 'listening' : 'idle');
         setRecognizedText('');
@@ -138,25 +136,28 @@ const CapturePage: React.FC = () => {
       return;
     }
 
-    if (cmd.action === 'start') {
+    if (command.action === 'start') {
       if (isRecording) {
-        setLastCommandResult({ text: cmd.text, success: false, msg: '已经在拍摄中了' });
+        setLastCommandResult({ text: command.text, success: false, msg: '已经在拍摄中了，无需重复开始' });
       } else {
-        setLastCommandResult({ text: cmd.text, success: true, msg: '已开始拍摄' });
+        setLastCommandResult({ text: command.text, success: true, msg: '✅ 已开始拍摄' });
         startRecording();
       }
     }
-    if (cmd.action === 'stop') {
+    if (command.action === 'stop') {
       if (!isRecording) {
-        setLastCommandResult({ text: cmd.text, success: false, msg: '当前未在拍摄' });
+        setLastCommandResult({ text: command.text, success: false, msg: '当前未在拍摄' });
       } else {
-        setLastCommandResult({ text: cmd.text, success: true, msg: '已停止拍摄' });
+        setLastCommandResult({ text: command.text, success: true, msg: '✅ 已停止拍摄，准备剪辑' });
         stopRecording();
       }
     }
 
     setTimeout(() => {
-      if (!isRecording && cmd.action !== 'stop') {
+      if (command.action === 'start' && isRecording) {
+        setVoiceState('listening');
+      }
+      if (command.action !== 'stop') {
         setVoiceState(voiceControlActive ? 'listening' : 'idle');
       }
       setRecognizedText('');
@@ -277,17 +278,31 @@ const CapturePage: React.FC = () => {
             </Button>
           </View>
 
-          <Button
-            className={classnames(styles.sideBtn, voiceControlActive && styles.sideBtnActive)}
-            onClick={simulateVoiceCommand}
-          >
-            <Text className={styles.sideBtnIcon}>
-              {voiceControlActive ? '🗣️' : '🔇'}
+          <View className={styles.voiceTestPanel}>
+            <Text className={styles.voiceTestTitle}>
+              {voiceControlActive ? '🎤 测试语音口令（点击说话）' : '🔇 请先开启语音控制'}
             </Text>
-            <Text className={styles.sideBtnText}>
-              {voiceControlActive ? '模拟说话' : '未启用'}
-            </Text>
-          </Button>
+            <View className={styles.voiceTestBtns}>
+              <Button
+                className={classnames(styles.voiceTestBtn, !voiceControlActive && styles.voiceTestBtnDisabled)}
+                onClick={() => handleVoiceCommand({ text: '开始拍摄', action: 'start' })}
+              >
+                🎬 说"开始拍摄"
+              </Button>
+              <Button
+                className={classnames(styles.voiceTestBtn, !voiceControlActive && styles.voiceTestBtnDisabled)}
+                onClick={() => handleVoiceCommand({ text: '停止拍摄', action: 'stop' })}
+              >
+                ⏹️ 说"停止拍摄"
+              </Button>
+              <Button
+                className={classnames(styles.voiceTestBtn, styles.voiceTestBtnNoise, !voiceControlActive && styles.voiceTestBtnDisabled)}
+                onClick={() => handleVoiceCommand({ text: '今天天气真好', action: 'noise' })}
+              >
+                💬 误说
+              </Button>
+            </View>
+          </View>
         </View>
 
         <View className={styles.voiceBtnRow}>
